@@ -55,6 +55,7 @@ int main()
     int folderCount;
     char fileName[256];
     int fileCount;
+    setlocale(LC_ALL, "Russian")
 
     std::cout << "Введите строку с уникальными символами для названия папок: ";
     std::cin >> folderName;
