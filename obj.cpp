@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <array>
+#include <string>
 
 const int maxVertices = 1000;
 const int maxTexCoords = 1000;
@@ -46,45 +47,67 @@ int faceCount = 0;
 int main() {
     // Открываем файл с данными OBJ
     std::ifstream objFile("your_file.obj");
-    if (!objFile) {
+    if (!objFile.is_open()) {
         std::cerr << "Не удалось открыть файл." << std::endl;
         return 1;
     }
 
     std::string line;
-    std::string prefix;
 
     // Читаем файл построчно
-    while (objFile >> prefix) {
+    while (std::getline(objFile, line)) {
+        std::istringstream iss(line);
+        std::string prefix;
+        iss >> prefix;
+
         // Если префикс "v", читаем координаты вершины
         if (prefix == "v") {
             if (vertexCount < maxVertices) {
-                objFile >> vertices[vertexCount].x >> vertices[vertexCount].y >> vertices[vertexCount].z;
-                std::cout << "Вершина " << vertexCount << ": x=" << vertices[vertexCount].x << " y=" << vertices[vertexCount].y << " z=" << vertices[vertexCount].z << std::endl;
-                vertexCount++;
+                float x, y, z;
+                if ((iss >> x >> y >> z)) {
+                    vertices[vertexCount].x = x;
+                    vertices[vertexCount].y = y;
+                    vertices[vertexCount].z = z;
+                    std::cout << "Вершина " << vertexCount << ": x=" << x << " y=" << y << " z=" << z << std::endl;
+                    vertexCount++;
+                }
             }
         } 
         // Если префикс "vt", читаем текстурные координаты
         else if (prefix == "vt") {
             if (texCoordCount < maxTexCoords) {
-                objFile >> texCoords[texCoordCount].u >> texCoords[texCoordCount].v;
-                std::cout << "Текстурные координаты " << texCoordCount << ": u=" << texCoords[texCoordCount].u << " v=" << texCoords[texCoordCount].v << std::endl;
-                texCoordCount++;
+                float u, v;
+                if ((iss >> u >> v)) {
+                    texCoords[texCoordCount].u = u;
+                    texCoords[texCoordCount].v = v;
+                    std::cout << "Текстурные координаты " << texCoordCount << ": u=" << u << " v=" << v << std::endl;
+                    texCoordCount++;
+                }
             }
         } 
         // Если префикс "vn", читаем нормали
         else if (prefix == "vn") {
             if (normalCount < maxNormals) {
-                objFile >> normals[normalCount].nx >> normals[normalCount].ny >> normals[normalCount].nz;
-                std::cout << "Нормаль " << normalCount << ": nx=" << normals[normalCount].nx << " ny=" << normals[normalCount].ny << " nz=" << normals[normalCount].nz << std::endl;
-                normalCount++;
+                float nx, ny, nz;
+                if ((iss >> nx >> ny >> nz)) {
+                    normals[normalCount].nx = nx;
+                    normals[normalCount].ny = ny;
+                    normals[normalCount].nz = nz;
+                    std::cout << "Нормаль " << normalCount << ": nx=" << nx << " ny=" << ny << " nz=" << nz << std::endl;
+                    normalCount++;
+                }
             }
         } 
         // Если префикс "f", читаем данные грани
         else if (prefix == "f") {
             if (faceCount < maxFaces) {
+                int vIndex, tIndex, nIndex;
                 for (int i = 0; i < 3; i++) {
-                    objFile >> faces[faceCount].vertexIndices[i] >> faces[faceCount].textureIndices[i] >> faces[faceCount].normalIndices[i];
+                    if ((iss >> vIndex >> tIndex >> nIndex)) {
+                        faces[faceCount].vertexIndices[i] = vIndex;
+                        faces[faceCount].textureIndices[i] = tIndex;
+                        faces[faceCount].normalIndices[i] = nIndex;
+                    }
                 }
                 std::cout << "Грань " << faceCount << ": ";
                 for (int i = 0; i < 3; i++) {
@@ -94,8 +117,6 @@ int main() {
                 faceCount++;
             }
         }
-
-        std::getline(objFile, line); // Считываем остаток строки
     }
 
     return 0;
