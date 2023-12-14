@@ -110,8 +110,8 @@ int main() {
                     }
                 }
                 std::cout << "Грань " << faceCount << ": ";
-                for (int i = 0; i < 3; i++) {
-                    std::cout << "Вершина: " << faces[faceCount].vertexIndices[i] << " Текстура: " << faces[faceCount].textureIndices[i] << " Нормаль: " << faces[faceCount].normalIndices[i] << " ";
+                for (int i = 0; i < 1; i++) {
+                 std::cout << "Вершина: " << faces[faceCount].vertexIndices[i] << " Текстурные: " << faces[faceCount].textureIndices[i] << " Нормали: " << faces[faceCount].normalIndices[i] << " ";
                 }
                 std::cout << std::endl;
                 faceCount++;
